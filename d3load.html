@@ -1,0 +1,109 @@
+<html>
+<meta charset="utf-8">
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+<button onclick = "update(data1)" > Sample 1</button>
+<button onclick = "update(data2)" > Sample 2</button>
+<div id = "my_dataviz"></div>
+  
+
+<script>
+let width = 450
+    height = 450
+    margin = 40
+
+let radius = Math.min(width, height) / 2 - margin
+
+let svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+let data1 = {food: 4,
+    selfie: 2,
+    marketing: 3,
+    advertisement: 11,
+    funny: 5,
+    party: 3,
+    photos: 2,
+    rant: 2,
+    memories: 6,
+    pets: 2,
+    cool: 1}
+let data2 = {food: 8,
+    selfie: 4,
+    marketing: 6,
+    advertisement: 12,
+    funny: 8,
+    party: 8,
+    photos: 4,
+    rant: 0,
+    memories: 7,
+    pets: 3,
+    cool: 4}
+
+
+let color = d3.scaleOrdinal()
+  .domain(["food", "selfie", "marketing", "advertisement", "funny", "party", "photos", "rant", "memories", "pets", "cool"])
+  .range(["#ffa500",
+"#ffff00",
+"#ff0000",
+"#ff0000",
+"#ffffff",
+"#0000ff",
+"#ffff00",
+"#ff0000",
+"#0000ff",
+"#ffc0cb",
+"#ffff00"])
+  
+function update(data) {
+
+    let pie = d3.pie()
+        .value(function(d) {return d.value; })
+        .sort(function(food, selfie){ console.log(food) ; return d3.ascending(food.key, selfie.key);})
+    let data_ready = pie(d3.entries(data))
+
+    let u = svg.selectAll("path")
+        .data(data_ready)
+
+    u
+        .enter()
+        .append('path')
+        .merge(u)
+        .transition()
+        .duration(1000)
+        .attr('d', d3.arc()
+            .innerRadius(0)
+            .outerRadius(radius)
+     )
+        .attr('fill', function(d){ return(color(d.data.key)) })
+        .attr("stroke", "black")
+        .style("stroke-width", "0.5px")
+        .style("opacity", 1)
+    u
+        .exit()
+        .remove()    
+}
+
+update(data1)
+let text = svg.selectAll()
+  .data(data1)
+  .enter()
+  .append("text")
+  .attr("text-anchor","middle")
+  .attr("font-family", "sans-serif")
+  .attr("font-size", "16px")
+  .attr("fill", "black")
+  .attr("x", 280)
+  .attr("y", 300)
+  .text(data1.food)
+
+console.log(text)
+</script>
+  
+
